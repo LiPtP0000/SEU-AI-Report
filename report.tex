@@ -98,7 +98,7 @@ K(x_i, x_j) = \exp\left(-\gamma \|x_i - x_j\|^2\right)
     \label{fig:result2}
 \end{figure}
 实验结果表明，高斯核方法能够有效处理非线性可分的数据集，并在较为复杂的数据结构中取得良好的分类效果。此外，超参数 $\gamma$ 的选择对分类性能有重要影响，需要通过交叉验证或网格搜索进行优化。
-\subsection{最优参数搜索}
+\subsection{最优参数搜索}\label{sec:optimal}
 \CodeReference{附录~\ref{sec:SVM}~的part3函数}
 
 在数据集3中，数据被划分为了训练集以及验证集。绘制训练集和验证集以观察数据（图~\ref{fig:dataset3}~）：
@@ -119,10 +119,99 @@ K(x_i, x_j) = \exp\left(-\gamma \|x_i - x_j\|^2\right)
     \label{fig:result3}
 \end{figure}
 \subsection{垃圾邮件分类}
-\CodeReference{}
-\section{提高训练}
-基于实验手册的内容，尝试对现有实验做修改和调整，如损失函数、激活函数等。
 
+
+根据SVM解决分类问题的方法，将垃圾邮件分类的步骤分为4步：
+\begin{enumerate}
+    \item 邮件预处理：去除HTML标签等无关信息，将邮件中的单词映射到查找表中；
+    \item 邮件特征提取：将邮件映射为n维向量，当出现查找表中的一个单词时，对应行标1；
+    \item SVM训练：使用高质量训练集确定高维非线性边界；
+    \item 邮件预测：基于边界判断是否为垃圾邮件。
+\end{enumerate}
+
+运行代码（\CodeReference{附录\ref{sec:spam}}），得到命令行输出如下所示，这符合我们的预期。他们分别对应四个部分的关键信息，意义在代码栏中已进行展示。
+\begin{lstlisting}[style = pythonstyle, language=bash,breaklines = true]
+# 邮件预处理：单词对应下标
+[86, 916, 794, 1077, 883, 370, 1699, 790, 1822, 1831, 883, 431, 1171, 794, 1002, 1893, 1364, 592, 1676, 238, 162, 89, 688, 945, 1663, 1120, 1062, 1699, 375, 1162, 479, 1893, 1510, 799, 1182, 1237, 810, 1895, 1440, 1547, 181, 1699, 1758, 1896, 688, 1676, 992, 961, 1477, 71, 530, 1699, 531]
+# 邮件预处理：待处理邮件中在查找表中的词汇
+anyone knows how much it costs to host a web portal     well  it depends on how many visitors you re expecting  this can be anywhere from less than number bucks a month to a couple of dollarnumber   you should checkout httpaddr or perhaps amazon ecnumber  if youre running something big    to unsubscribe yourself from this mailing list  send an email to  emailaddr  
+# 邮件特征提取：待处理邮件被映射为的n维向量
+[[0.]
+ [0.]
+ [0.]
+ ...
+ [1.]
+ [0.]
+ [0.]]
+# SVM训练：模型准确率（训练集、测试集）
+99.825%
+98.9%
+# SVM训练：垃圾邮件中高词频单词
+spam
+that
+urgent
+wrong
+datapow
+linux
+round
+numberth
+useless
+unsubscrib
+august
+ratio
+xp
+toll
+http
+
+# 邮件预测：对第二封邮件进行垃圾邮件判决
+[1]
+邮件被分类为垃圾邮件。
+\end{lstlisting}
+\section{提高训练}
+\subsection{细化线性可分SVM的$C$参数}
+更改线性可分SVM的$C$参数，进一步观察是否会出现过拟合现象。挑选四个典型的$C$参数进行测试，画出的线性决策边界如图~\ref{fig:linear4}~所示。可以看到尽管$C$参数选得很大，但因为其为线性边界，过拟合现象并未发生。
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figure/svm.png}
+    \caption{$C =$ 1,10,100,1000时的线性可分SVM决策边界}
+    \label{fig:linear4}
+\end{figure}
+
+另外，为了直接生成子图，对原有的part1部分代码进行了重写。新版的part1代码见附录~\ref{sec:subfloat}。
+\subsection{调整搜索参数后的最优参数搜索}
+在章节~\ref{sec:optimal}~中，设定了参数$C$和$\sigma$的搜索空间为\texttt{[0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]}。现在将其修改为：\texttt{[0.03, 0.02, 0.3, 0.2, 3, 2, 30, 20]}，在此参数搜索空间下，SVM训练后得到的非线性边界有所不同。新的搜索空间下，分类结果变差了。
+\begin{figure}[htbp]
+    \centering
+    \subfloat[原搜索空间的边界]{\includegraphics[width=0.45\textwidth]{figure/fig7.png}}
+    \hfill
+    \subfloat[更新搜索空间后的边界]{\includegraphics[width=0.45\textwidth]{figure/optimal_new.png}}
+    \caption{不同搜索空间下非线性边界的变化}  
+\end{figure}
+
+打印两种搜索空间下选出的最优参数，前者为：
+\begin{verbatim}
+    {
+        'error': 0.03500000000000003,
+        'C': 1,
+        'sigma': 0.1,
+        'gamma': 49.99999999999999
+    }
+\end{verbatim}
+
+
+后者为：
+\begin{verbatim}
+    {
+        'error': 0.040000000000000036, 
+        'C': 0.3, 
+        'sigma': 0.2, 
+        'gamma': 12.499999999999998
+    }  
+\end{verbatim}
+
+
+
+可以看出，后者的误差变得更大了，且和前者相比，选择了更容易出偏差的参数。因此，在算力有限的情况下，优化参数选择需要精心设计搜索空间。
 \section{实验心得}
 
 在本次实验中，我理解了支持向量机的基本工作流程以及使用Python训练SVM模型，拟合线性、非线性边界的基本方法。并基于SVM完成了垃圾邮件分类识别的小实验。另外，我还独立编写了\LaTeX 模板（\texttt{SEU-AI-Report.cls}），用于本实验报告的撰写。在这个过程中也学到了不少关于\LaTeX 的进阶知识。
@@ -134,8 +223,67 @@ K(x_i, x_j) = \exp\left(-\gamma \|x_i - x_j\|^2\right)
 \section{实验代码}
 该部分列举本实验中使用的所有实验代码。
 \subsection{SVM训练相关代码}\label{sec:SVM}
-\pythoncode[caption = ex3.py]{ex3.py}
+\pythoncode[caption = ex3.py]{test.py}
 \subsection{垃圾邮件分类相关代码}\label{sec:spam}
-\pythoncode[caption = ex3\_spam.py]{spam.py}
+\pythoncode[caption = ex3\_spam.py]{test2.py}
+\subsection{绘制线性可分SVM子图相关代码}\label{sec:subfloat}
+\begin{lstlisting}[style=pythonstyle,language=python,caption= 新版part1函数以及相关改动]
+def plot(data, ax=None):
+    if ax is None:
+        ax = plt.gca()  # 获取当前的 Axes
+    positives = data[data[:, 2] == 1]
+    negatives = data[data[:, 2] == 0]
 
+    ax.plot(positives[:, 0], positives[:, 1], 'b+', label='Positive')
+    ax.plot(negatives[:, 0], negatives[:, 1], 'yo', label='Negative')
+
+# 绘制SVM决策边界
+def visualize_boundary(X, trained_svm, ax=None):
+    if ax is None:
+        ax = plt.gca()  # 获取当前的 Axes
+
+    kernel = trained_svm.get_params()['kernel']
+    if kernel == 'linear':
+        w = trained_svm.coef_[0]
+        i = trained_svm.intercept_
+        xp = np.linspace(min(X[:, 0]), max(X[:, 0]), 100)
+        a = -w[0] / w[1]
+        b = i[0] / w[1]
+        yp = a * xp - b
+        ax.plot(xp, yp, 'b-')
+    elif kernel == 'rbf':
+        x1plot = np.linspace(min(X[:, 0]), max(X[:, 0]), 100)
+        x2plot = np.linspace(min(X[:, 1]), max(X[:, 1]), 100)
+        
+        X1, X2 = np.meshgrid(x1plot, x2plot)
+        vals = np.zeros(np.shape(X1))
+        
+        for i in range(0, np.shape(X1)[1]):
+            this_X = np.c_[X1[:, i], X2[:, i]]
+            vals[:, i] = trained_svm.predict(this_X)
+        
+        ax.contour(X1, X2, vals, colors='blue')
+
+
+def part1():
+	mat = scipy.io.loadmat("dataset_1.mat")
+	X, y = mat['X'], mat['y']
+    
+	plt.title('Data Set 1 Distribution')
+	plot(np.c_[X, y])
+	plt.show(block=True)
+    
+	fig, axes = plt.subplots(2, 2, figsize=(10, 10)) 
+	C_values = [1, 10, 100, 1000]
+	for ax, C in zip(axes.ravel(), C_values):
+		linear_svm = svm.SVC(C=C, kernel='linear')
+		linear_svm.fit(X, y.ravel())
+
+		ax.set_title(f'SVM Decision Boundary with C = {C}')
+		plot(np.c_[X, y],ax=ax)
+		visualize_boundary(X, linear_svm,ax=ax)     
+
+	plt.tight_layout()  
+	plt.show()
+\end{lstlisting}
 \end{document}
