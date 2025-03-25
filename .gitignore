@@ -4,3 +4,8 @@
 *.log
 *.synctex*
 *-blx.bib
+*.blg
+*.fdb*
+*.out
+*.xdv
+*.xml
