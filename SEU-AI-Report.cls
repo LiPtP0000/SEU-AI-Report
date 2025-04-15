@@ -107,6 +107,7 @@
     \newpage
     \setcounter{section}{0}
     \setcounter{subsection}{0}
+    \setcounter{lstlisting}{0}
     \renewcommand\thesection{附录~\Alph{section}}
     \renewcommand\thesubsection{\Alph{section}.\arabic{subsection}}
     \titleformat{\section}{\large\bfseries\CJKfamily{hei}}{\thesection}{1em}{}
@@ -144,7 +145,7 @@
 \definecolor{backcolor}{rgb}{0.95,0.95,0.95}
 
 % Define Python code listing style
-\lstdefinestyle{pythonstyle}{
+\lstdefinestyle{codestyle}{
     backgroundcolor=\color{backcolor},  
     commentstyle=\color{codegreen},     
     keywordstyle=\color{codeblue}\bfseries,  
@@ -164,11 +165,34 @@
     frame=single                        
 }
 
-% 输入整个Python文件到Listing中
-\newcommand{\pythoncode}[2][]{%
-    \lstinputlisting[style=pythonstyle,language = python,#1]{#2}
+\lstdefinestyle{bashstyle}{
+  backgroundcolor=\color{black},        % 背景颜色为黑色
+  basicstyle=\ttfamily\color{white},     % 文字为白色的等宽字体
+  keywordstyle=\color{cyan},             % 关键字为青色
+  commentstyle=\color{gray},             % 注释为灰色
+  stringstyle=\color{yellow},            % 字符串为黄色
+  numberstyle=\tiny\color{gray},         % 行号为灰色
+  numbersep=5pt,                         % 行号与代码间的距离
+  frame=single,                          % 单线框架
+  rulecolor=\color{white},               % 边框颜色为白色
+  breaklines=true,                       % 自动换行
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}, % 换行时的箭头
+  showstringspaces=false,                % 不显示字符串中的空格
+  captionpos=b,                          % 标题位置为底部
+  xleftmargin=20pt,                      % 左边距
+  xrightmargin=20pt,                     % 右边距
+  aboveskip=10pt,                        % 上方间距
+  belowskip=10pt,                        % 下方间距
+  numbers = none                         % 禁用编号
 }
 
+% 输入整个Python文件到Listing中
+\newcommand{\pythoncode}[2][]{%
+    \lstinputlisting[style=codestyle,language = python,#1]{#2}
+}
+\newcommand{\matlabcode}[2][]{
+    \lstinputlisting[style=codestyle,language = matlab,#1]{#2}
+}
 
 % 预定义说明文字
 \newcommand{\analyze}[1]{\CJKfamily{kai} 实验结果分析：#1\normalfont}
