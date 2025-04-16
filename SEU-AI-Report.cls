@@ -6,7 +6,7 @@
 % Compiler (with references): XeLaTeX -> BibTeX -> XeLaTeX -> XeLaTeX
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{SEU-AI-Report}[Report Template for AIDL Course V1.1]
+\ProvidesClass{SEU-AI-Report}[2025-04-16 Report Template for AIDL Course V1.1]
 
 
 \LoadClass[a4paper,12pt]{article}
@@ -43,7 +43,7 @@
 }
 
 
-% 中英文字体
+% Font
 \setmainfont{Times New Roman}
 \setCJKmainfont{SimSun}[AutoFakeBold = true]
 \setCJKsansfont{SimHei}[AutoFakeBold = true]
@@ -51,11 +51,12 @@
 \setCJKfamilyfont{hei}{SimHei}[AutoFakeBold = true]
 \setCJKfamilyfont{kai}[Path=C:/Windows/Fonts/]{SimKai.ttf}
 
-% 页边距、正文行距
+% Geometry
 \geometry{left=2.5cm,right=2.5cm,top=3.5cm,bottom=2.5cm}
-\renewcommand{\baselinestretch}{1.2}  % 设置行距为1.2倍
-% 标题
-\renewcommand{\title}[2]{ % 仅接收实验编号
+\renewcommand{\baselinestretch}{1.2}  
+
+% Title
+\renewcommand{\title}[2]{ 
     \begin{center}
         {\large \CJKfamily{hei}《人工智能与深度学习》课程 \\[2em] \LARGE 实~验~报~告} \\[2em]
         {\large \CJKfamily{kai} （第~#1~次实验）} \\[4em]
@@ -70,7 +71,7 @@
    \vspace{0.5em} 
 }
 
-\newcommand{\studentinfo}{ % 直接定义信息，无需额外参数
+\newcommand{\studentinfo}{ 
   \begin{center}
     {\large 学号：\studentid} \\[2em]
     {\large 姓名：\studentname} \\[2em]
@@ -79,7 +80,7 @@
 %   \vspace{2em}
 }
 
-% 设置学生信息
+% Student Info Command Settings
 \newcommand{\setstudentinfo}[5]{
     \renewcommand{\studentid}{#1}
     \renewcommand{\studentname}{#2}
@@ -88,14 +89,14 @@
     \renewcommand{\studentday}{#5}
 }
 
-% 学生信息缺省值
+% Default
 \newcommand{\studentid}{未填写}
 \newcommand{\studentname}{未填写}
 \newcommand{\studentyear}{未填写}
 \newcommand{\studentmonth}{未填写}
 \newcommand{\studentday}{未填写}
 
-% 主文档字体、章节编号设置
+
 \titleformat{\section}{\large\bfseries\CJKfamily{hei}}{\thesection、}{0em}{}
 \titleformat{\subsection}{\normalsize\bfseries\CJKfamily{hei}}{\thesubsection}{1em}{}
 \renewcommand{\normalsize}{\fontsize{12pt}{14pt}\selectfont}
@@ -103,7 +104,7 @@
 \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
 
 
-% 附录
+% Appendix
 \renewcommand\appendix{
     \newpage
     \setcounter{section}{0}
@@ -115,11 +116,11 @@
     \titleformat{\subsection}{\normalsize\bfseries\CJKfamily{hei}}{\thesubsection}{1em}{}
     }
 
-% 参考文献支持
+% References
 \addbibresource{ref.bib}
 \renewcommand{\refname}{参考文献}
 
-% 页眉页脚设置，第一页缺省页眉
+% Head and Foot
 \pagestyle{fancy}
 \fancyhf{}
 \rhead{\small \studentid~\studentname}
@@ -137,7 +138,7 @@
 % Fancyhdr headheight
 \setlength{\headheight}{13.6pt}
 
-% Caption 设置
+% Caption Settings
 \renewcommand{\lstlistingname}{程序}
 \renewcommand{\figurename}{图}
 \renewcommand{\tablename}{表}
@@ -192,16 +193,31 @@
 }
 
 % Short-hand of inserting matlab & python code
+
 \newcommand{\pythoncode}[2][]{%
-    \lstinputlisting[style=codestyle,language = python,#1]{#2}
+\IfFileExists{#2}{
+        \lstinputlisting[style=codestyle,language = python,#1]{#2}
+    }
+    {
+        \textcolor{red}{Cannot find input file. Please check if you are writing "#2". }
+        \ClassWarning {SEU-AI-Report} {Cannot find input file "#2".}
+    }
 }
 \newcommand{\matlabcode}[2][]{
-    \lstinputlisting[style=codestyle,language = matlab,#1]{#2}
+    \IfFileExists{#2}{
+        \lstinputlisting[style=codestyle,language = matlab,#1]{#2}
+    }
+    {
+        \textcolor{red}{Cannot find input file. Please check if you are writing "#2". }
+        \ClassWarning {SEU-AI-Report} {Cannot find input file "#2".}
+    }
 }
 
-% 预定义说明文字
+% Predefine describing commands
 \newcommand{\analyze}[1]{\CJKfamily{kai} 实验结果分析：#1\normalfont}
 \newcommand{\figureAnalyze}[1]{\CJKfamily{kai} 图表分析： #1\normalfont}
 \newcommand{\CodeReference}[1]{\CJKfamily{kai} 对应代码： #1 \normalfont}
-% 文档开始
+
+% Handle false input files
+
 \endinput
