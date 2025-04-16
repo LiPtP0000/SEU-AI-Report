@@ -5,8 +5,11 @@
 
 \setstudentinfo{12345678}{LiPtP}{2025}{3}{25}
 
-\begin{document}
+% You can change to your preferred monofont at here
+\setmonofont{Consolas}
 
+\begin{document}
+% Do not use \maketitle
 \title{1}{支持向量机}
 
 \section{实验目的}
@@ -130,7 +133,7 @@ K(x_i, x_j) = \exp\left(-\gamma \|x_i - x_j\|^2\right)
 \end{enumerate}
 
 运行代码（\CodeReference{附录\ref{sec:spam}}），得到命令行输出如下所示，这符合我们的预期。他们分别对应四个部分的关键信息，意义在代码栏中已进行展示。
-\begin{lstlisting}[style = pythonstyle, language=bash,breaklines = true]
+\begin{lstlisting}[style = bashstyle]
 # 邮件预处理：单词对应下标
 [86, 916, 794, 1077, 883, 370, 1699, 790, 1822, 1831, 883, 431, 1171, 794, 1002, 1893, 1364, 592, 1676, 238, 162, 89, 688, 945, 1663, 1120, 1062, 1699, 375, 1162, 479, 1893, 1510, 799, 1182, 1237, 810, 1895, 1440, 1547, 181, 1699, 1758, 1896, 688, 1676, 992, 961, 1477, 71, 530, 1699, 531]
 # 邮件预处理：待处理邮件中在查找表中的词汇
@@ -227,7 +230,7 @@ http
 \subsection{垃圾邮件分类相关代码}\label{sec:spam}
 \pythoncode[caption = ex3\_spam.py]{test2.py}
 \subsection{绘制线性可分SVM子图相关代码}\label{sec:subfloat}
-\begin{lstlisting}[style=pythonstyle,language=python,caption= 新版part1函数以及相关改动]
+\begin{lstlisting}[style=codestyle,language=python,caption= 新版part1函数以及相关改动]
 def plot(data, ax=None):
     if ax is None:
         ax = plt.gca()  # 获取当前的 Axes

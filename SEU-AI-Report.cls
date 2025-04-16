@@ -6,9 +6,9 @@
 % Compiler (with references): XeLaTeX -> BibTeX -> XeLaTeX -> XeLaTeX
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{SEU-AI-Report}[Report Template for AIDL Course V1.0]
+\ProvidesClass{SEU-AI-Report}[Report Template for AIDL Course V1.1]
 
-% 基础类
+
 \LoadClass[a4paper,12pt]{article}
 
 
@@ -20,7 +20,7 @@
 \RequirePackage{subfig}
 \RequirePackage{graphicx}
 \RequirePackage{amsmath}
-\RequirePackage{geometry}        % 页面设置
+\RequirePackage{geometry}        
 \RequirePackage{xcolor}          % For defining custom colors
 \RequirePackage{listings}        % For code highlighting
 \RequirePackage{lipsum}          % For Dummy Content
@@ -45,9 +45,10 @@
 
 % 中英文字体
 \setmainfont{Times New Roman}
-\setCJKmainfont{SimSun}
-\setCJKsansfont{SimHei}
-\setCJKfamilyfont{hei}{SimHei}
+\setCJKmainfont{SimSun}[AutoFakeBold = true]
+\setCJKsansfont{SimHei}[AutoFakeBold = true]
+\setCJKmonofont[Path=C:/Windows/Fonts/]{SimKai.ttf}
+\setCJKfamilyfont{hei}{SimHei}[AutoFakeBold = true]
 \setCJKfamilyfont{kai}[Path=C:/Windows/Fonts/]{SimKai.ttf}
 
 % 页边距、正文行距
@@ -79,7 +80,7 @@
 }
 
 % 设置学生信息
-\newcommand{\setstudentinfo}[5]{ % 先调用这个命令来设置信息
+\newcommand{\setstudentinfo}[5]{
     \renewcommand{\studentid}{#1}
     \renewcommand{\studentname}{#2}
     \renewcommand{\studentyear}{#3}
@@ -102,11 +103,12 @@
 \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
 
 
-% 附录（默认不换页，可自行newpage）
+% 附录
 \renewcommand\appendix{
     \newpage
     \setcounter{section}{0}
     \setcounter{subsection}{0}
+    \setcounter{lstlisting}{0}
     \renewcommand\thesection{附录~\Alph{section}}
     \renewcommand\thesubsection{\Alph{section}.\arabic{subsection}}
     \titleformat{\section}{\large\bfseries\CJKfamily{hei}}{\thesection}{1em}{}
@@ -132,6 +134,9 @@
 
 \AtBeginDocument{\thispagestyle{firstpage}}
 
+% Fancyhdr headheight
+\setlength{\headheight}{13.6pt}
+
 % Caption 设置
 \renewcommand{\lstlistingname}{程序}
 \renewcommand{\figurename}{图}
@@ -143,8 +148,8 @@
 \definecolor{codeblue}{rgb}{0,0,0.8}
 \definecolor{backcolor}{rgb}{0.95,0.95,0.95}
 
-% Define Python code listing style
-\lstdefinestyle{pythonstyle}{
+% Define Python and Matlab code listing style
+\lstdefinestyle{codestyle}{
     backgroundcolor=\color{backcolor},  
     commentstyle=\color{codegreen},     
     keywordstyle=\color{codeblue}\bfseries,  
@@ -164,11 +169,35 @@
     frame=single                        
 }
 
-% 输入整个Python文件到Listing中
-\newcommand{\pythoncode}[2][]{%
-    \lstinputlisting[style=pythonstyle,language = python,#1]{#2}
+% Define Console Line Style
+\lstdefinestyle{bashstyle}{
+  backgroundcolor=\color{black},        % 背景颜色为黑色
+  basicstyle=\ttfamily\color{white},     % 文字为白色的等宽字体
+  keywordstyle=\color{cyan},             % 关键字为青色
+  commentstyle=\color{gray},             % 注释为灰色
+  stringstyle=\color{yellow},            % 字符串为黄色
+  numberstyle=\tiny\color{gray},         % 行号为灰色
+  numbersep=5pt,                         % 行号与代码间的距离
+  frame=single,                          % 单线框架
+  rulecolor=\color{white},               % 边框颜色为白色
+  breaklines=true,                       % 自动换行
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}, % 换行时的箭头
+  showstringspaces=false,                % 不显示字符串中的空格
+  captionpos=b,                          % 标题位置为底部
+  xleftmargin=20pt,                      % 左边距
+  xrightmargin=20pt,                     % 右边距
+  aboveskip=10pt,                        % 上方间距
+  belowskip=10pt,                        % 下方间距
+  numbers = none                         % 禁用编号
 }
 
+% Short-hand of inserting matlab & python code
+\newcommand{\pythoncode}[2][]{%
+    \lstinputlisting[style=codestyle,language = python,#1]{#2}
+}
+\newcommand{\matlabcode}[2][]{
+    \lstinputlisting[style=codestyle,language = matlab,#1]{#2}
+}
 
 % 预定义说明文字
 \newcommand{\analyze}[1]{\CJKfamily{kai} 实验结果分析：#1\normalfont}
